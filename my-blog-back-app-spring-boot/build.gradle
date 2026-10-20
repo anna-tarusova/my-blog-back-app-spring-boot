@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'ru.practicum'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 1. Веб-слой: включает spring-webmvc, spring-web, jackson-databind, встроенный Tomcat и validation
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 2. Работа с БД: включает spring-data-jdbc, spring-jdbc и HikariCP (пул соединений)
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+
+    // 3. Драйвер базы данных (доступен только во время выполнения)
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // 4. Lombok (генерация геттеров, сеттеров и т.д.)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 5. Тестирование: включает JUnit 5, Spring Test, Mockito, Hamcrest, JsonPath
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 6. H2 для тестов (in-memory БД, как было в вашем pom.xml)
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

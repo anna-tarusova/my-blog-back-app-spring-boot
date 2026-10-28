@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.dao.CommentRepository;
-import ru.practicum.dao.PostRepository;
-import ru.practicum.dao.TagRepository;
+import ru.practicum.repository.CommentRepository;
+import ru.practicum.repository.PostRepository;
+import ru.practicum.repository.TagRepository;
 import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.CommentUpdateDto;
@@ -23,6 +23,7 @@ import ru.practicum.service.PostService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -58,10 +59,14 @@ public class PostServiceImpl implements PostService {
         }
 
         PostDto post = postOpt.get();
-        post.setTags(new ArrayList<>());
-        for (String tag : postRepository.findTags(post.getId())) {
-            post.getTags().add(tag);
-        }
+        post = new PostDto(
+                post.id(),
+                post.title(),
+                post.text(),
+                postRepository.findTags(post.id()),
+                post.likesCount(),
+                post.commentsCount()
+        );
 
         return post;
     }
@@ -87,12 +92,20 @@ public class PostServiceImpl implements PostService {
         } else {
             int offset = (pageNumber - 1) * pageSize;
             posts = postRepository.findPostsPage(normalizedSearch, pageSize, offset);
+            List<PostDto> updatedPosts = new ArrayList<>();
             for (PostDto post : posts) {
-                post.setTags(new ArrayList<>());
-                for (String tag : postRepository.findTags(post.getId())) {
-                    post.getTags().add(tag);
-                }
+                List<String> tags = postRepository.findTags(post.id());
+                PostDto updatedPost = new PostDto(
+                        post.id(),
+                        post.title(),
+                        post.text(),
+                        tags,
+                        post.likesCount(),
+                        post.commentsCount()
+                );
+                updatedPosts.add(updatedPost);
             }
+            posts = updatedPosts;
         }
 
         boolean hasPrev = pageNumber > 1;
@@ -141,7 +154,7 @@ public class PostServiceImpl implements PostService {
         // Работа с тегами (полная замена)
         tagRepository.deleteByPostId(request.id());
 
-        if (tags != null && !tags.isEmpty()) {
+        if (!tags.isEmpty()) {
             tagRepository.saveAll(tags.stream()
                     .map(tag -> Tag.builder().postId(request.id()).name(tag).build())
                     .toList());
@@ -335,7 +348,7 @@ public class PostServiceImpl implements PostService {
             throw new IllegalArgumentException("tags must not be null");
         }
         return tags.stream()
-                .filter(tag -> tag != null)
+                .filter(Objects::nonNull)
                 .map(String::trim)
                 .map(tag -> tag.startsWith(TAG_PREFIX) ? tag.substring(TAG_PREFIX.length()).trim() : tag)
                 .filter(tag -> !tag.isEmpty())

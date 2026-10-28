@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.dao.CommentRepository;
-import ru.practicum.dao.PostRepository;
-import ru.practicum.dao.TagRepository;
+import ru.practicum.repository.CommentRepository;
+import ru.practicum.repository.PostRepository;
+import ru.practicum.repository.TagRepository;
 import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.CommentDto;
 import ru.practicum.dto.PostCreateDto;
@@ -62,8 +62,8 @@ class PostServiceImplIntegrationTest {
 
         PostDto result = postService.createPost(request);
 
-        assertNotNull(result.getId());
-        assertEquals("New DB Post", result.getTitle());
+        assertNotNull(result.id());
+        assertEquals("New DB Post", result.title());
 
         // Проверяем, что теги сохранились (с учетом нормализации, убравшей "#")
         List<Tag> savedTags = tagRepository.findAll();
@@ -79,8 +79,8 @@ class PostServiceImplIntegrationTest {
         PostsPageDto page1 = postService.getPostsPage("Java", 1, 1);
 
         assertEquals(1, page1.posts().size());
-        assertTrue(page1.posts().get(0).getTitle().contains("Java")
-                || page1.posts().get(0).getText().contains("Java"));
+        assertTrue(page1.posts().getFirst().title().contains("Java")
+                || page1.posts().getFirst().text().contains("Java"));
         assertTrue(page1.hasNext());
         assertFalse(page1.hasPrev());
         assertEquals(2, page1.lastPage());
@@ -92,8 +92,8 @@ class PostServiceImplIntegrationTest {
 
         PostDto result = postService.updatePost(request);
 
-        assertEquals("Updated Title", result.getTitle());
-        assertEquals("Updated Text", result.getText());
+        assertEquals("Updated Title", result.title());
+        assertEquals("Updated Text", result.text());
 
         // Проверяем, что старый тег удален, а новый добавлен
         List<Tag> currentTags = tagRepository.findAll();
@@ -104,7 +104,7 @@ class PostServiceImplIntegrationTest {
 
     @Test
     void incrementLikes_shouldIncreaseCountInDb() {
-        long initialLikes = postService.getPost(testPostId).getLikesCount();
+        long initialLikes = postService.getPost(testPostId).likesCount();
 
         long newLikes = postService.incrementLikes(testPostId);
 
@@ -125,7 +125,7 @@ class PostServiceImplIntegrationTest {
 
         List<CommentDto> comments = postService.getCommentsByPostId(testPostId);
         assertEquals(1, comments.size());
-        assertEquals("Great post!", comments.get(0).text());
+        assertEquals("Great post!", comments.getFirst().text());
     }
 
     @Test

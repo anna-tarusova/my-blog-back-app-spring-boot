@@ -9,9 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.dao.CommentRepository;
-import ru.practicum.dao.PostRepository;
-import ru.practicum.dao.TagRepository;
+import ru.practicum.repository.PostRepository;
+import ru.practicum.repository.TagRepository;
 import ru.practicum.dto.CommentCreateDto;
 import ru.practicum.dto.PostCreateDto;
 import ru.practicum.dto.PostDto;
@@ -33,9 +32,6 @@ class PostServiceImplTest {
 
     @Mock
     private PostRepository postRepository;
-
-    @Mock
-    private CommentRepository commentRepository;
 
     @Mock
     private TagRepository tagRepository;
@@ -70,8 +66,8 @@ class PostServiceImplTest {
         PostDto result = postService.getPost(1L);
 
         assertNotNull(result);
-        assertEquals(2, result.getTags().size());
-        assertTrue(result.getTags().contains("tag1"));
+        assertEquals(2, result.tags().size());
+        assertTrue(result.tags().contains("tag1"));
     }
 
     @Test

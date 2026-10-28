@@ -18,8 +18,11 @@ repositories {
 }
 
 dependencies {
-    // Веб-слой: включает spring-webmvc, spring-web, jackson-databind, встроенный Tomcat и validation
+    // Веб-слой: включает spring-webmvc, spring-web, jackson-databind, встроенный Tomcat
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    //Валидация для DTO (@NotNull, @NotBlank, @Size и т.д.)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Работа с БД: включает spring-data-jdbc, spring-jdbc и HikariCP (пул соединений)
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'

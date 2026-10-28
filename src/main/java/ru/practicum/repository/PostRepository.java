@@ -1,6 +1,7 @@
-package ru.practicum.dao;
+package ru.practicum.repository;
 
 import org.springframework.data.repository.CrudRepository;
+import ru.practicum.dao.PostDao;
 import ru.practicum.model.Post;
 
 /**

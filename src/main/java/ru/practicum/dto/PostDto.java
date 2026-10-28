@@ -1,39 +1,59 @@
 package ru.practicum.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
-/**
- * Пост в ответе API (элемент ленты).
- */
-public class PostDto {
-    @Getter
-    @Setter
-    private Long id;
-    @Getter
-    @Setter
-    private String title;
-    @Getter
-    @Setter
-    private String text;
-    @Getter
-    @Setter
-    private List<String> tags;
-    @Getter
-    @Setter
-    private long likesCount;
-    @Getter
-    @Setter
-    private long commentsCount;
+public record PostDto(
+        Long id,
+        String title,
+        String text,
+        List<String> tags,
+        long likesCount,
+        long commentsCount
+) {
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public PostDto(Long id, String title, String text, List<String> tags, long likesCount, long commentsCount) {
-        this.id = id;
-        this.title = title;
-        this.text = text;
-        this.tags = tags;
-        this.likesCount = likesCount;
-        this.commentsCount = commentsCount;
+    public static class Builder {
+        private Long id;
+        private String title;
+        private String text;
+        private List<String> tags;
+        private long likesCount;
+        private long commentsCount;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public Builder tags(List<String> tags) {
+            this.tags = tags;
+            return this;
+        }
+
+        public Builder likesCount(long likesCount) {
+            this.likesCount = likesCount;
+            return this;
+        }
+
+        public Builder commentsCount(long commentsCount) {
+            this.commentsCount = commentsCount;
+            return this;
+        }
+
+        public PostDto build() {
+            return new PostDto(id, title, text, tags, likesCount, commentsCount);
+        }
     }
 }

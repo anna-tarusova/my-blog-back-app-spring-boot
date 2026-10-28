@@ -1,4 +1,4 @@
-package ru.practicum.web;
+package ru.practicum.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
